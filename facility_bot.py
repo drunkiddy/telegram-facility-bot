@@ -17,7 +17,7 @@ FACILITY_CODES = [
 NOTIFICATION_MESSAGE = "Attention! Facility node {} mentioned in the message."
 
 # Initialize the Telegram bot
-updater = Updater(TOKEN, use_context=True)
+updater = Updater(TOKEN)
 dispatcher = updater.dispatcher
 
 def start(update: Update, context: CallbackContext) -> None:
