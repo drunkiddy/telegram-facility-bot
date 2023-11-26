@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
 
 # Replace 'YOUR_BOT_TOKEN' with the token you obtained from BotFather
-TOKEN = 'YOUR_BOT_TOKEN'
+TOKEN = '6963239388:AAHQYANzrN4xOQCyNXfc6wLQp-ub7WjfC2k'
 
 # Define the facility codes you want to monitor
 FACILITY_CODES = [
