@@ -1,45 +1,39 @@
-import re
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters
+from telegram.ext import Updater, MessageHandler, Filters
 
-# Replace 'YOUR_BOT_TOKEN' with the token you obtained from BotFather
+# Replace 'YOUR_BOT_TOKEN' with the actual token provided by BotFather
 TOKEN = '6963239388:AAHQYANzrN4xOQCyNXfc6wLQp-ub7WjfC2k'
 
-# Define the facility codes you want to monitor
-FACILITY_CODES = [
-    'CMH1', 'CHO1', 'PHL5', 'ORF2', 'ORF3', 'JFK8', 'LDJ5', 'SYR1', 'SGA1', 'VGA1',
-    'LGA5', 'LGA9', 'MKE2', 'AUS2', 'MCI5', 'MSP8', 'MTN1', 'BOS4', 'RFD4', 'MOB5',
-    'DET6', 'ABE8', 'ACY2', 'HDT9', 'DTW3', 'DTW9', 'HMK3', 'LIT1', 'FTW1', 'CLT9',
-    'GRR1', 'DTW1', 'CLE2', 'EWR4', 'RBD5', 'OWD5', 'OWD9', 'MTN2', 'JAN1', 'VCB3', 'DEN2'
-]
+# Facility codes
+facility_nodes = set([
+    "CMH1", "CHO1", "PHL5", "ORF2", "ORF3", "JFK8", "LDJ5", "SYR1", "SGA1",
+    "VGA1", "LGA5", "LGA9", "MKE2", "AUS2", "MCI5", "MSP8", "MTN1", "BOS4",
+    "RFD4", "MOB5", "DET6", "ABE8", "ACY2", "HDT9", "DTW3", "DTW9", "HMK3",
+    "LIT1", "FTW1", "CLT9", "GRR1", "DTW1", "CLE2", "EWR4", "RBD5", "OWD5",
+    "OWD9", "MTN2", "JAN1", "VCB3", "DEN2"
+])
 
-# Define the notification message
-NOTIFICATION_MESSAGE = "Attention! Facility node {} mentioned in the message."
+# Replace 'YOUR_MESSAGE' with the notification message you want to send
+NOTIFICATION_MESSAGE = 'Facility node detected: {}'
 
-# Initialize the Telegram bot
-updater = Updater(TOKEN, use_context=True)
-dispatcher = updater.dispatcher
+def start(update, context):
+    update.message.reply_text('Hello! I am your facility bot. Mention a facility node to receive a notification.')
 
-def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Bot is running!')
+def handle_messages(update, context):
+    message_text = update.message.text
+    detected_facility_nodes = [node for node in facility_nodes if node in message_text]
 
-def handle_message(update: Update, context: CallbackContext) -> None:
-    text = update.message.text
+    for node in detected_facility_nodes:
+        context.bot.send_message(update.message.chat_id, NOTIFICATION_MESSAGE.format(node))
 
-    # Check if any facility code is mentioned in the message
-    for code in FACILITY_CODES:
-        if re.search(r'\b{}\b'.format(code), text):
-            context.bot.send_message(update.effective_chat.id, NOTIFICATION_MESSAGE.format(code))
-            # Uncomment the following line to send a photo as a notification
-            # context.bot.send_photo(update.effective_chat.id, photo=open('path/to/photo.jpg', 'rb'))
+def main():
+    updater = Updater(TOKEN, use_context=True)
+    dp = updater.dispatcher
 
-# Add command handlers
-start_handler = CommandHandler('start', start)
-message_handler = MessageHandler(Filters.text & ~Filters.command, handle_message)
+    dp.add_handler(MessageHandler(Filters.TEXT & ~Filters.COMMAND, handle_messages))
+    dp.add_handler(MessageHandler(Filters.COMMAND, start))
 
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(message_handler)
+    updater.start_polling()
+    updater.idle()
 
-# Start the bot
-updater.start_polling()
-updater.idle()
+if __name__ == '__main__':
+    main()
