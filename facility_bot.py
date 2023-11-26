@@ -1,6 +1,6 @@
 import re
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters
 
 # Replace 'YOUR_BOT_TOKEN' with the token you obtained from BotFather
 TOKEN = '6963239388:AAHQYANzrN4xOQCyNXfc6wLQp-ub7WjfC2k'
@@ -17,7 +17,7 @@ FACILITY_CODES = [
 NOTIFICATION_MESSAGE = "Attention! Facility node {} mentioned in the message."
 
 # Initialize the Telegram bot
-updater = Updater(TOKEN)
+updater = Updater(TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 def start(update: Update, context: CallbackContext) -> None:
